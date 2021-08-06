@@ -3,6 +3,7 @@ package ventanas;
 import jcomponents.*;
 import java.awt.event.*;
 import javax.swing.*;
+import acciones.*;
 
 public class VentanaUI 
 {
@@ -23,13 +24,15 @@ public class VentanaUI
         JScrollPane1 spResultado = new JScrollPane1(taResultado, 320, 100);
         
         JButton1 bVerificar = new JButton1("VERIFICAR", 140, 25);
+        JButton1 bLimpiar = new JButton1("LIMPIAR", 140, 25);
 
-        JFrame1 dMenu = new JFrame1("ANALIZADOR LEXICO");
+        JFrame1 fMenu = new JFrame1("ANALIZADOR LEXICO");
 
-        dMenu.add(lGuia);
-        dMenu.add(spTexto);
-        dMenu.add(bVerificar);
-        dMenu.add(spResultado);
+        fMenu.add(lGuia);
+        fMenu.add(spTexto);
+        fMenu.add(bVerificar);
+        fMenu.add(bLimpiar);
+        fMenu.add(spResultado);
 
         bVerificar.addActionListener(
             new ActionListener()
@@ -37,11 +40,24 @@ public class VentanaUI
                 @Override
                 public void actionPerformed(ActionEvent e) 
                 {
-                    System.out.println("ENTER");
+                    bVerificar.setEnabled(false);
+                    taResultado.append(Analisis.separar(taTexto.getText()));
                 }
             }
         );
-        dMenu.sizeSettings(true, 360, 320);
-        dMenu.locationSettings();
+        bLimpiar.addActionListener(
+            new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e) 
+                {
+                    taTexto.setText(null);
+                    bVerificar.setEnabled(true);
+                }
+            }
+        );
+
+        fMenu.sizeSettings(true, 360, 320);
+        fMenu.locationSettings();
     } 
 }

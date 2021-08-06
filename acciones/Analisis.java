@@ -32,30 +32,32 @@ public class Analisis
         separar("  AA..A AA      G  1.23 .654 5958.  ");
     }
 
-    static void separar(String sTexto)
+    public static String separar(String texto1)
     {
-        char[] texto = limpiar(sTexto);
+        char[] texto2 = limpiar(texto1);
 
         String temporal = "";
-
-        for (int i = 0; i < texto.length; i = i + 1)
+        String temporal2 = "";
+        //System.out.println();
+        for (int i = 0; i < texto2.length; i = i + 1)
         {
             // recorrer cadena hasta encontrar un espacio
             // guardar los elementos anterior a ese espacio
-            if(texto[i] == ' ')// | (i == texto.length - 1))
+            if(texto2[i] == ' ')// | (i == texto.length - 1))
             {
-                System.out.print(">>" + temporal + "<.\n");
-                reconocerNumero(temporal.toCharArray());
+                // G U I A
+                // System.out.print(">>" + temporal + "<.\n");
+                temporal2 = 
+                temporal2 + reconocerNumero(temporal.toCharArray()) + 
                 reconocerIdentificador(temporal.toCharArray());
-
-                
                 temporal = "";
             }
             else
             {
-                temporal = temporal + texto[i];
+                temporal = temporal + texto2[i];
             }
         }
+        return temporal2;
     }
 
     static char[] limpiar(String sTexto)
@@ -111,7 +113,7 @@ public class Analisis
         return aTexto1;
     }     
 
-    static void reconocerIdentificador(char[] lexema)
+    static String reconocerIdentificador(char[] lexema)
     {
         if(lexema.length > 0)
         {
@@ -119,27 +121,28 @@ public class Analisis
             // then esas letras son un id
             if (esLetra1(lexema[0]) | esLetra2(lexema[0])) {
                 String temp = "";
-
+                String temp2 = "";
                 for (int i = 0; i < lexema.length; i = i + 1) {
                     if (esDigito(lexema[i]) | esLetra1(lexema[i]) | esLetra2(lexema[i])) {
                         temp = temp + lexema[i];
                     }
                     if (esSimbolo(lexema[i]))
                     {
-                        System.out.println("IDENTIFICADOR: " + temp);
-                        System.out.println("SIMBOLO: " + lexema[i]);
+                        temp2 = temp2 + "IDENTIFICADOR: " + temp + "\nSIMBOLO: " + lexema[i];
                         temp = "";
                     }
                     if ((i == lexema.length - 1) & !esSimbolo(lexema[i])) {
-                        System.out.println("IDENTIFICADOR: " + temp);
+                        temp2 = temp2 + "IDENTIFICADOR: " + temp + "\n";
                         temp = "";
                     }
                 }
+                return temp2;
             }
         }
+        return "";
     }
 
-    static void reconocerNumero(char[] lexema)
+    static String reconocerNumero(char[] lexema)
     {
         boolean esNumero = true;
         boolean esEntero = true;
@@ -194,27 +197,35 @@ public class Analisis
             //System.out.println("[!] decimal en algun extremo");
         }
 
-        // conclusion para el lexema
+        // conclusion sobre el lexema
         if(esNumero)
         {
+            String temp = "";    
+            for (int i = 0; i < lexema.length; i = i + 1)
+            {
+                temp = temp + lexema[i];
+            }
+
             if(esEntero)
             {
-                System.out.println("ENTERO");
+                return "ENTERO: " + temp;
             }
             if(esDecimal)
             {
-                System.out.println("DECIMAL");
+                return "DECIMAL: " + temp;            
             }
+
         }
+        /*
         else
         {
             //System.out.println("ERROR");
         }
-        /*
         System.out.println("esNumero: " + esNumero);
         System.out.println("esEntero: " + esEntero);
         System.out.println("esDecimal: " + esDecimal);
         */
+        return "";
     }
 
     
