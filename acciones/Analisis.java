@@ -15,6 +15,7 @@ public class Analisis
         'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
         'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
+    static char[] simbolos = {'{', '}', '[', ']', ';', ',', '.'};
 
     public static void main(String[] args) 
     {
@@ -28,79 +29,7 @@ public class Analisis
         }
 
         */
-        separar("  AAA AA      G  123 654 5958  ");
-    }
-
-    static void reconocerNumero(char[] lexema)
-    {
-        boolean esNumero = true;
-        boolean esEntero = true;
-        boolean esDecimal = true;
-
-        // SI es entero debe tener 1 o mas digitos 
-        // Si es decimal debe tener al menos 2 digitos y un punto
-
-        // si !esNumero return ERROR o intentar con otro tipo de token, como Simbol
-
-        int puntoDecimal = 0;
-        int iPuntoDecimal = -1;
-        for (int i = 0; i < lexema.length; i = i + 1)
-        {
-            //System.out.println(lexema[i]);
-
-            // SI UN char NO es digito Y NO es '.'
-            if(!esDigito(lexema[i]) & (lexema[i] != '.'))
-            {
-                // el lexema NO es numero
-                esNumero = false;
-                break;
-            }
-
-            // SI UN char es '.'
-            if(lexema[i] == '.')
-            {
-                puntoDecimal = puntoDecimal + 1;
-                iPuntoDecimal = i;
-
-                // el lexema NO es entero
-                esEntero = false;
-                // SI hay mas de un '.'
-                if(puntoDecimal > 1)
-                {
-                    // el lexema NO es numero
-                    esNumero = false;
-                    break;
-                }
-            }
-        }
-
-        if(puntoDecimal == 0)
-        {
-            esDecimal = false;
-        }
-
-        if((iPuntoDecimal == 0)|(iPuntoDecimal == lexema.length - 1))
-        {
-            esNumero = false;
-            System.out.println("[!] decimal en algun extremo");
-        }
-
-        // conclusion para el lexema
-        if(esNumero)
-        {
-            if(esEntero)
-            {
-                System.out.println("[?] ZOI UN ENTERO");
-            }
-            if(esDecimal)
-            {
-                System.out.println("[?] ZOI UN DECIMAL");
-            }
-        }
-
-        System.out.println("esNumero: " + esNumero);
-        System.out.println("esEntero: " + esEntero);
-        System.out.println("esDecimal: " + esDecimal);
+        separar("  AA..A AA      G  1.23 .654 5958.  ");
     }
 
     static void separar(String sTexto)
@@ -115,11 +44,12 @@ public class Analisis
             // guardar los elementos anterior a ese espacio
             if(texto[i] == ' ')// | (i == texto.length - 1))
             {
-                System.out.print(">>");
-                System.out.print(temporal);
-                System.out.print("<.\n");
+                System.out.print(">>" + temporal + "<.\n");
+                reconocerNumero(temporal.toCharArray());
+                reconocerIdentificador(temporal.toCharArray());
+
+                
                 temporal = "";
-                //reconocerNumero(temporal.toCharArray());
             }
             else
             {
@@ -180,6 +110,113 @@ public class Analisis
         }
         return aTexto1;
     }     
+
+    static void reconocerIdentificador(char[] lexema)
+    {
+        if(lexema.length > 0)
+        {
+            // mientras hallan letras hasta encontrar un punto
+            // then esas letras son un id
+            if (esLetra1(lexema[0]) | esLetra2(lexema[0])) {
+                String temp = "";
+
+                for (int i = 0; i < lexema.length; i = i + 1) {
+                    if (esDigito(lexema[i]) | esLetra1(lexema[i]) | esLetra2(lexema[i])) {
+                        temp = temp + lexema[i];
+                    }
+                    if (esSimbolo(lexema[i]))
+                    {
+                        System.out.println("IDENTIFICADOR: " + temp);
+                        System.out.println("SIMBOLO: " + lexema[i]);
+                        temp = "";
+                    }
+                    if ((i == lexema.length - 1) & !esSimbolo(lexema[i])) {
+                        System.out.println("IDENTIFICADOR: " + temp);
+                        temp = "";
+                    }
+                }
+            }
+        }
+    }
+
+    static void reconocerNumero(char[] lexema)
+    {
+        boolean esNumero = true;
+        boolean esEntero = true;
+        boolean esDecimal = true;
+
+        // SI es entero debe tener 1 o mas digitos 
+        // Si es decimal debe tener al menos 2 digitos y un punto
+
+        // si !esNumero return ERROR o intentar con otro tipo de token, como Simbol
+
+        int puntoDecimal = 0;
+        int iPuntoDecimal = -1;
+        for (int i = 0; i < lexema.length; i = i + 1)
+        {
+            //System.out.println(lexema[i]);
+
+            // SI UN char NO es digito Y NO es '.'
+            if(!esDigito(lexema[i]) & (lexema[i] != '.'))
+            {
+                // el lexema NO es numero
+                esNumero = false;
+                break;
+            }
+
+            // SI UN char es '.'
+            if(lexema[i] == '.')
+            {
+                puntoDecimal = puntoDecimal + 1;
+                iPuntoDecimal = i;
+
+                // el lexema NO es entero
+                esEntero = false;
+                // SI hay mas de un '.'
+                if(puntoDecimal > 1)
+                {
+                    // el lexema NO es numero
+                    esNumero = false;
+                    break;
+                }
+            }
+        }
+
+        if(puntoDecimal == 0)
+        {
+            esDecimal = false;
+        }
+
+        if((iPuntoDecimal == 0)|(iPuntoDecimal == lexema.length - 1))
+        {
+            esNumero = false;
+            //System.out.println("ERROR");
+            //System.out.println("[!] decimal en algun extremo");
+        }
+
+        // conclusion para el lexema
+        if(esNumero)
+        {
+            if(esEntero)
+            {
+                System.out.println("ENTERO");
+            }
+            if(esDecimal)
+            {
+                System.out.println("DECIMAL");
+            }
+        }
+        else
+        {
+            //System.out.println("ERROR");
+        }
+        /*
+        System.out.println("esNumero: " + esNumero);
+        System.out.println("esEntero: " + esEntero);
+        System.out.println("esDecimal: " + esDecimal);
+        */
+    }
+
     
     static void ejemplo()
     {
@@ -210,7 +247,7 @@ public class Analisis
         }
         return false;
     }
-    static boolean esLetraMa(char letra)
+    static boolean esLetra2(char letra)
     {
         for (int i = 0; i < letras2.length; i = i + 1)
         {
@@ -222,7 +259,7 @@ public class Analisis
         return false;
     }
 
-    static boolean esLetraMi(char letra)
+    static boolean esLetra1(char letra)
     {
         for (int i = 0; i < letras1.length; i = i + 1)
         {
@@ -234,6 +271,16 @@ public class Analisis
         return false;
     }
 
-
+    static boolean esSimbolo(char simbolo)
+    {
+        for (int i = 0; i < simbolos.length; i = i + 1)
+        {
+            if(simbolos[i] == simbolo)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
